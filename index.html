@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Neon Pong - Multiplayer Ping Pong Game</title>
+    <meta name="description"
+        content="Play an exciting multiplayer ping pong game with friends using room codes. Premium neon-themed design with smooth gameplay.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Inter:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <!-- Background Effects -->
+    <div class="bg-gradient"></div>
+    <div class="bg-grid"></div>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Main Menu -->
+        <div id="mainMenu" class="menu-screen active">
+            <div class="logo-container">
+                <h1 class="game-title">
+                    <span class="neon-text">NEON</span>
+                    <span class="pong-text">PONG</span>
+                </h1>
+                <p class="subtitle">Multiplayer Ping Pong Experience</p>
+            </div>
+
+            <div class="menu-buttons">
+                <button class="btn btn-primary" id="hostBtn">
+                    <span class="btn-icon">🎮</span>
+                    <span class="btn-text">Host Game</span>
+                </button>
+                <button class="btn btn-secondary" id="joinBtn">
+                    <span class="btn-icon">🔗</span>
+                    <span class="btn-text">Join Game</span>
+                </button>
+                <button class="btn btn-tertiary" id="howToPlayBtn">
+                    <span class="btn-icon">❓</span>
+                    <span class="btn-text">How to Play</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Host Game Screen -->
+        <div id="hostScreen" class="menu-screen">
+            <div class="screen-header">
+                <button class="back-btn" id="hostBackBtn">← Back</button>
+                <h2 class="screen-title">Host Game</h2>
+            </div>
+
+            <div class="host-content">
+                <div class="status-card">
+                    <div class="status-icon">🎯</div>
+                    <h3>Waiting for Player 2...</h3>
+                    <p class="status-text">Share this code with your friend</p>
+
+                    <div class="room-code-display">
+                        <div class="code-label">Room Code</div>
+                        <div class="code-value" id="roomCode">------</div>
+                        <button class="copy-btn" id="copyCodeBtn">
+                            <span>📋 Copy Code</span>
+                        </button>
+                    </div>
+
+                    <div class="connection-status">
+                        <div class="status-indicator"></div>
+                        <span id="connectionStatus">Initializing...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Join Game Screen -->
+        <div id="joinScreen" class="menu-screen">
+            <div class="screen-header">
+                <button class="back-btn" id="joinBackBtn">← Back</button>
+                <h2 class="screen-title">Join Game</h2>
+            </div>
+
+            <div class="join-content">
+                <div class="input-card">
+                    <div class="input-icon">🔑</div>
+                    <h3>Enter Room Code</h3>
+                    <p class="input-description">Enter the 6-digit code from your friend</p>
+
+                    <div class="code-input-container">
+                        <input type="text" id="codeInput" class="code-input" placeholder="000000" maxlength="6"
+                            autocomplete="off">
+                    </div>
+
+                    <button class="btn btn-primary btn-large" id="connectBtn" disabled>
+                        <span class="btn-text">Connect to Game</span>
+                    </button>
+
+                    <div class="join-status" id="joinStatus"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- How to Play Screen -->
+        <div id="howToPlayScreen" class="menu-screen">
+            <div class="screen-header">
+                <button class="back-btn" id="howToPlayBackBtn">← Back</button>
+                <h2 class="screen-title">How to Play</h2>
+            </div>
+
+            <div class="instructions-content">
+                <div class="instruction-card">
+                    <div class="instruction-number">1</div>
+                    <h3>Host or Join</h3>
+                    <p>One player hosts a game and shares the room code. The other player joins using that code.</p>
+                </div>
+
+                <div class="instruction-card">
+                    <div class="instruction-number">2</div>
+                    <h3>Controls</h3>
+                    <p><strong>Desktop:</strong> W/S (Player 1), Arrow Keys (Player 2)<br>
+                        <strong>Mobile:</strong> Touch controls on screen
+                    </p>
+                </div>
+
+                <div class="instruction-card">
+                    <div class="instruction-number">3</div>
+                    <h3>Gameplay</h3>
+                    <p>Hit the ball with your paddle. Ball speed increases over time for more challenge!</p>
+                </div>
+
+                <div class="instruction-card">
+                    <div class="instruction-number">4</div>
+                    <h3>Win Condition</h3>
+                    <p>Score points when your opponent misses the ball. First to 10 points wins!</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Game Screen -->
+        <div id="gameScreen" class="game-container">
+            <div class="game-header">
+                <div class="player-info player-1">
+                    <div class="player-label">Player 1</div>
+                    <div class="score" id="score1">0</div>
+                </div>
+
+                <div class="game-status">
+                    <div class="status-badge" id="gameStatus">Waiting...</div>
+                </div>
+
+                <div class="player-info player-2">
+                    <div class="player-label">Player 2</div>
+                    <div class="score" id="score2">0</div>
+                </div>
+            </div>
+
+            <canvas id="gameCanvas"></canvas>
+
+            <div class="game-footer">
+                <button class="btn btn-small btn-danger" id="quitBtn">Quit Game</button>
+            </div>
+
+            <!-- Mobile Touch Controls -->
+            <div class="touch-controls" id="touchControls">
+                <div class="touch-control-area left">
+                    <div class="touch-btn" id="touchUpLeft" data-key="w">▲</div>
+                    <div class="touch-label">Player 1</div>
+                    <div class="touch-btn" id="touchDownLeft" data-key="s">▼</div>
+                </div>
+                <div class="touch-control-area right">
+                    <div class="touch-btn" id="touchUpRight" data-key="ArrowUp">▲</div>
+                    <div class="touch-label">Player 2</div>
+                    <div class="touch-btn" id="touchDownRight" data-key="ArrowDown">▼</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Game Over Screen -->
+        <div id="gameOverScreen" class="menu-screen">
+            <div class="game-over-content">
+                <div class="trophy-icon" id="trophyIcon">🏆</div>
+                <h2 class="game-over-title" id="gameOverTitle">Player 1 Wins!</h2>
+                <div class="final-score">
+                    <div class="final-score-item">
+                        <span class="final-score-label">Player 1</span>
+                        <span class="final-score-value" id="finalScore1">0</span>
+                    </div>
+                    <div class="final-score-divider">-</div>
+                    <div class="final-score-item">
+                        <span class="final-score-label">Player 2</span>
+                        <span class="final-score-value" id="finalScore2">0</span>
+                    </div>
+                </div>
+
+                <div class="menu-buttons">
+                    <button class="btn btn-primary" id="playAgainBtn">
+                        <span class="btn-text">Play Again</span>
+                    </button>
+                    <button class="btn btn-secondary" id="mainMenuBtn">
+                        <span class="btn-text">Main Menu</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.2/dist/peerjs.min.js"></script>
+    <script src="game.js"></script>
+</body>
+
+</html>
